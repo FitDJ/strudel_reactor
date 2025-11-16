@@ -1,7 +1,7 @@
 import './App.css';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
-import { evalScope } from '@strudel/core';
+import { cpm, evalScope, set } from '@strudel/core';
 import { drawPianoroll } from '@strudel/draw';
 import { initAudioOnFirstClick } from '@strudel/webaudio';
 import { transpiler } from '@strudel/transpiler';
@@ -10,68 +10,76 @@ import { registerSoundfonts } from '@strudel/soundfonts';
 import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 
+import DJ_Controls from './components/DJ_Controls';
+import Play_Buttons from './components/Play_Buttons';
+import PreProcText from './components/PreProcText';
+import { preProcess } from './utils/preProcessLogic';
+import { toggleSectionPrefix } from './utils/MuteLogic';
+import { startPlayback, stopPlayback } from './services/PlaybackServices';
+
 let globalEditor = null;
 
 const handleD3Data = (event) => {
     console.log(event.detail);
 };
 
-export function SetupButtons() {
-
-    document.getElementById('play').addEventListener('click', () => globalEditor.evaluate());
-    document.getElementById('stop').addEventListener('click', () => globalEditor.stop());
-    document.getElementById('process').addEventListener('click', () => {
-        Proc()
-    }
-    )
-    document.getElementById('process_play').addEventListener('click', () => {
-        if (globalEditor != null) {
-            Proc()
-            globalEditor.evaluate()
-        }
-    }
-    )
-}
-
-
-
-export function ProcAndPlay() {
-    if (globalEditor != null && globalEditor.repl.state.started == true) {
-        console.log(globalEditor)
-        Proc()
-        globalEditor.evaluate();
-    }
-}
-
-export function Proc() {
-
-    let proc_text = document.getElementById('proc').value
-    let proc_text_replaced = proc_text.replaceAll('<p1_Radio>', ProcessText);
-    ProcessText(proc_text);
-    globalEditor.setCode(proc_text_replaced)
-}
-
-export function ProcessText(match, ...args) {
-
-    let replace = ""
-    if (document.getElementById('flexRadioDefault2').checked) {
-        replace = "_"
-    }
-
-    return replace
-}
-
 export default function StrudelDemo() {
 
-const hasRun = useRef(false);
+    const hasRun = useRef(false);
+    
+    const [procText, setProcText] = useState(stranger_tune);
+    const [volume, setVolume] = useState(1);
+    const [state, setState] = useState("stop");
+    const [cpmError, setCpmError] = useState(false);
 
-useEffect(() => {
 
-    if (!hasRun.current) {
-        document.addEventListener("d3Data", handleD3Data);
-        console_monkey_patch();
-        hasRun.current = true;
-        //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
+    const handlePlay = () => {
+        startPlayback(globalEditor, procText, volume, preProcess);
+    }
+
+    const handleToggle = (e) => {
+        const { id, checked } = e.target;
+
+
+        setProcText(prev => {
+            const newText = toggleSectionPrefix(prev, id, checked);
+
+            if (state === "play" && globalEditor) {
+                handlePlay();
+            }
+
+        return newText
+    });
+    };
+
+    const handleSetCpm = (e) => {
+        const value = e.target.valueAsNumber;
+        if (isNaN(value)|| value <= 0) { // invalid CPM
+            setCpmError(true);
+            return;
+        }
+
+        // valid CPM, hide alert
+        setCpmError(false);
+
+        // Update procText only, playback will pick it up when next Play is clicked
+        setProcText(prev => prev.replace(/setcps\([^)]+\)/, `setcps(${value}/60/4)`));
+    };
+
+    useEffect(() => {
+
+        if (state === "play") {
+            handlePlay();
+        }
+    }, [volume])
+
+    useEffect(() => {
+
+        if (!hasRun.current) {
+            document.addEventListener("d3Data", handleD3Data);
+            console_monkey_patch();
+            hasRun.current = true;
+            //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
             //init canvas
             const canvas = document.getElementById('roll');
             canvas.width = canvas.width * 2;
@@ -97,62 +105,62 @@ useEffect(() => {
                     await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
                 },
             });
-            
-        document.getElementById('proc').value = stranger_tune
-        SetupButtons()
-        Proc()
-    }
 
-}, []);
+            document.getElementById('proc').value = procText
+            globalEditor.setCode(procText);
+        }
+    }, [procText]);
 
 
-return (
-    <div>
-        <h2>Strudel Demo</h2>
-        <main>
+    return (
+        <div>
+            <h2>Strudel Demo</h2>
+            <main>
 
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <label htmlFor="exampleFormControlTextarea1" className="form-label">Text to preprocess:</label>
-                        <textarea className="form-control" rows="15" id="proc" ></textarea>
-                    </div>
-                    <div className="col-md-4">
-
-                        <nav>
-                            <button id="process" className="btn btn-outline-primary">Preprocess</button>
-                            <button id="process_play" className="btn btn-outline-primary">Proc & Play</button>
-                            <br />
-                            <button id="play" className="btn btn-outline-primary">Play</button>
-                            <button id="stop" className="btn btn-outline-primary">Stop</button>
-                        </nav>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <div id="editor" />
-                        <div id="output" />
-                    </div>
-                    <div className="col-md-4">
-                        <div className="form-check">
-                            <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onChange={ProcAndPlay} defaultChecked />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">
-                                p1: ON
-                            </label>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                            <PreProcText 
+                                defaultValue={procText} 
+                                onChange={(e) => setProcText(e.target.value)} 
+                            />
                         </div>
-                        <div className="form-check">
-                            <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" onChange={ProcAndPlay} />
-                            <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                p1: HUSH
-                            </label>
+                        <div className="col-md-4">
+
+                            <nav>
+                                <Play_Buttons 
+                                    onPlay={() => { 
+                                        setState("play"); 
+                                        handlePlay() 
+                                    }} 
+                                    onStop={() => { 
+                                        setState("stop"); 
+                                        stopPlayback(globalEditor); 
+                                    }} 
+                                />
+                            </nav>
                         </div>
                     </div>
+                    <div className="row">
+                        <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                            <div id="editor" />
+                            <div id="output" />
+                        </div>
+                        <div className="col-md-4">
+                            <DJ_Controls 
+                                volume={volume} 
+                                onVolumeChange={(e) => setVolume(e.target.value)} 
+                                onToggle={handleToggle} 
+                                onSetCpm={handleSetCpm}
+                                cpmError={cpmError}
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <canvas id="roll"></canvas>
-        </main >
-    </div >
-);
+                <canvas id="roll"></canvas>
+            </main >
+        </div >
+    );
 
 
 }
