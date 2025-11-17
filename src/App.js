@@ -131,44 +131,69 @@ export default function StrudelDemo() {
                     </div>
                 </div>
 
-                    <div className="container-fluid">
-                        <div className="row">
-                            
-                            <div className="col-md-4">
-
-                                <nav>
-                                    <Play_Buttons 
-                                        onPlay={() => { 
-                                            setState("play"); 
-                                            handlePlay() 
-                                        }} 
-                                        onStop={() => { 
-                                            setState("stop"); 
-                                            stopPlayback(globalEditor); 
-                                        }} 
-                                    />
-                                </nav>
+                {/* Middle Row: Playback Controls | D3 Graph | DJ Controls */}
+                <div className="row mb-3">
+                    {/* Playback Controls */}
+                    <div className="col-md-4 mb-3">
+                        <div className="card">
+                            <div className="card-header">Playback Controls</div>
+                            <div className="card-body d-flex flex-column gap-2">
+                                <Play_Buttons
+                                    onPlay={() => { 
+                                        setState("play"); 
+                                        handlePlay()
+                                    }}
+                                    onStop={() => { 
+                                        setState("stop"); 
+                                        stopPlayback(globalEditor);
+                                    }}
+                                />
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                                <div id="editor" />
-                                <div id="output" />
+                    </div>
+                    
+                    {/* D3 Graph */}
+                    <div className="col-md-4 mb-3">
+                        <div className="card">
+                            <div className="card-header">D3 Graph</div>
+                            <div className="card-body" style={{ minHeight: "200px" }}>
+                                <div id="d3Graph">
+                                    
+                                </div>
                             </div>
-                            <div className="col-md-4">
-                                <DJ_Controls 
-                                    volume={volume} 
-                                    onVolumeChange={(e) => setVolume(e.target.value)} 
-                                    onToggle={handleToggle} 
+                        </div>
+                    </div>
+
+                    {/* DJ Controls */}
+                    <div className="col-md-4 mb-3">
+                        <div className="card">
+                            <div className="card-header">DJ Controls</div>
+                            <div className="card-body">
+                                <DJ_Controls
+                                    volume={volume}
+                                    onVolumeChange={(e) => setVolume(e.target.value)}
+                                    onToggle={handleToggle}
                                     onSetCpm={handleSetCpm}
                                     cpmError={cpmError}
                                 />
                             </div>
                         </div>
                     </div>
+                </div>
+
+                    <div className="container-fluid">
+                        <div className="row">
+                            
+                            
+                        <div className="row">
+                            <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                                <div id="editor" />
+                                <div id="output" />
+                            </div>
+                        </div>
+                    </div>
                     <canvas id="roll"></canvas>
+            </div >
         </div >
     );
-
-
 }
