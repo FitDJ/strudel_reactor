@@ -113,52 +113,60 @@ export default function StrudelDemo() {
 
 
     return (
-        <div>
-            <h2>Strudel Demo</h2>
-            <main>
-
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                            <PreProcText 
-                                defaultValue={procText} 
-                                onChange={(e) => setProcText(e.target.value)} 
-                            />
-                        </div>
-                        <div className="col-md-4">
-
-                            <nav>
-                                <Play_Buttons 
-                                    onPlay={() => { 
-                                        setState("play"); 
-                                        handlePlay() 
-                                    }} 
-                                    onStop={() => { 
-                                        setState("stop"); 
-                                        stopPlayback(globalEditor); 
-                                    }} 
+        <div className="container-fluid py-3" >
+            <h2 className="text-center mb-4">Strudel Demo React Assignment 2</h2>
+            
+                {/* Top Row: Preprocess Text */}
+                <div className="row mb-3">
+                    <div className="col-md-12">
+                        <div className="card">
+                            <div className="card-header">Song Preprocessing</div>
+                            <div className="card-body">
+                                <PreProcText
+                                    defaultValue={procText}
+                                    onChange={(e) => setProcText(e.target.value)}
                                 />
-                            </nav>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                            <div id="editor" />
-                            <div id="output" />
-                        </div>
-                        <div className="col-md-4">
-                            <DJ_Controls 
-                                volume={volume} 
-                                onVolumeChange={(e) => setVolume(e.target.value)} 
-                                onToggle={handleToggle} 
-                                onSetCpm={handleSetCpm}
-                                cpmError={cpmError}
-                            />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <canvas id="roll"></canvas>
-            </main >
+
+                    <div className="container-fluid">
+                        <div className="row">
+                            
+                            <div className="col-md-4">
+
+                                <nav>
+                                    <Play_Buttons 
+                                        onPlay={() => { 
+                                            setState("play"); 
+                                            handlePlay() 
+                                        }} 
+                                        onStop={() => { 
+                                            setState("stop"); 
+                                            stopPlayback(globalEditor); 
+                                        }} 
+                                    />
+                                </nav>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                                <div id="editor" />
+                                <div id="output" />
+                            </div>
+                            <div className="col-md-4">
+                                <DJ_Controls 
+                                    volume={volume} 
+                                    onVolumeChange={(e) => setVolume(e.target.value)} 
+                                    onToggle={handleToggle} 
+                                    onSetCpm={handleSetCpm}
+                                    cpmError={cpmError}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="roll"></canvas>
         </div >
     );
 
