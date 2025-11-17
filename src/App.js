@@ -181,19 +181,19 @@ export default function StrudelDemo() {
                     </div>
                 </div>
 
-                    <div className="container-fluid">
-                        <div className="row">
-                            
-                            
-                        <div className="row">
-                            <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                                <div id="editor" />
+                {/* Bottom Row: Editor*/}
+                <div className="row mb-3">
+                    <div className="col-md-12">
+                        <div className="card">
+                            <div className="card-header">Code Editor</div>
+                            <div className="card-body">
+                                <div id="editor" style={{ minHeight: "300px", backgroundColor: "#1e1e1e" }} />
                                 <div id="output" />
                             </div>
                         </div>
                     </div>
-                    <canvas id="roll"></canvas>
-            </div >
-        </div >
+                </div>
+            <canvas id="roll"></canvas>
+        </div>
     );
 }
