@@ -113,14 +113,14 @@ export default function StrudelDemo() {
 
 
     return (
-        <div className="container-fluid py-3" >
+        <div className="container-fluid py-3" style={{ backgroundColor: "#f2f2f2" }}>
             <h2 className="text-center mb-4">Strudel Demo React Assignment 2</h2>
             
                 {/* Top Row: Preprocess Text */}
                 <div className="row mb-3">
                     <div className="col-md-12">
                         <div className="card">
-                            <div className="card-header">Song Preprocessing</div>
+                            <div className="card-header bg-primary text-white">Song Preprocessing</div>
                             <div className="card-body">
                                 <PreProcText
                                     defaultValue={procText}
@@ -136,7 +136,7 @@ export default function StrudelDemo() {
                     {/* Playback Controls */}
                     <div className="col-md-4 mb-3">
                         <div className="card">
-                            <div className="card-header">Playback Controls</div>
+                            <div className="card-header bg-success text-white">Playback Controls</div>
                             <div className="card-body d-flex flex-column gap-2">
                                 <Play_Buttons
                                     onPlay={() => { 
@@ -155,7 +155,7 @@ export default function StrudelDemo() {
                     {/* D3 Graph */}
                     <div className="col-md-4 mb-3">
                         <div className="card">
-                            <div className="card-header">D3 Graph</div>
+                            <div className="card-header bg-secondary text-white">D3 Graph</div>
                             <div className="card-body" style={{ minHeight: "200px" }}>
                                 <div id="d3Graph">
                                     
@@ -167,7 +167,7 @@ export default function StrudelDemo() {
                     {/* DJ Controls */}
                     <div className="col-md-4 mb-3">
                         <div className="card">
-                            <div className="card-header">DJ Controls</div>
+                            <div className="card-header bg-dark text-white">DJ Controls</div>
                             <div className="card-body">
                                 <DJ_Controls
                                     volume={volume}
@@ -185,7 +185,7 @@ export default function StrudelDemo() {
                 <div className="row mb-3">
                     <div className="col-md-12">
                         <div className="card">
-                            <div className="card-header">Code Editor</div>
+                            <div className="card-header bg-dark text-white">Code Editor</div>
                             <div className="card-body">
                                 <div id="editor" style={{ minHeight: "300px", backgroundColor: "#1e1e1e" }} />
                                 <div id="output" />
