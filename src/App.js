@@ -113,54 +113,87 @@ export default function StrudelDemo() {
 
 
     return (
-        <div>
-            <h2>Strudel Demo</h2>
-            <main>
-
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                            <PreProcText 
-                                defaultValue={procText} 
-                                onChange={(e) => setProcText(e.target.value)} 
-                            />
-                        </div>
-                        <div className="col-md-4">
-
-                            <nav>
-                                <Play_Buttons 
-                                    onPlay={() => { 
-                                        setState("play"); 
-                                        handlePlay() 
-                                    }} 
-                                    onStop={() => { 
-                                        setState("stop"); 
-                                        stopPlayback(globalEditor); 
-                                    }} 
+        <div className="container-fluid py-3" style={{ backgroundColor: "#f2f2f2" }}>
+            <h2 className="text-center mb-4">Strudel Demo React Assignment 2</h2>
+            
+                {/* Top Row: Preprocess Text */}
+                <div className="row mb-3">
+                    <div className="col-md-12">
+                        <div className="card">
+                            <div className="card-header bg-primary text-white">Song Preprocessing</div>
+                            <div className="card-body">
+                                <PreProcText
+                                    defaultValue={procText}
+                                    onChange={(e) => setProcText(e.target.value)}
                                 />
-                            </nav>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                            <div id="editor" />
-                            <div id="output" />
-                        </div>
-                        <div className="col-md-4">
-                            <DJ_Controls 
-                                volume={volume} 
-                                onVolumeChange={(e) => setVolume(e.target.value)} 
-                                onToggle={handleToggle} 
-                                onSetCpm={handleSetCpm}
-                                cpmError={cpmError}
-                            />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <canvas id="roll"></canvas>
-            </main >
-        </div >
+
+                {/* Middle Row: Playback Controls | D3 Graph | DJ Controls */}
+                <div className="row mb-3">
+                    {/* Playback Controls */}
+                    <div className="col-md-4 mb-3">
+                        <div className="card">
+                            <div className="card-header bg-success text-white">Playback Controls</div>
+                            <div className="card-body d-flex flex-column gap-2">
+                                <Play_Buttons
+                                    onPlay={() => { 
+                                        setState("play"); 
+                                        handlePlay()
+                                    }}
+                                    onStop={() => { 
+                                        setState("stop"); 
+                                        stopPlayback(globalEditor);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* D3 Graph */}
+                    <div className="col-md-4 mb-3">
+                        <div className="card">
+                            <div className="card-header bg-secondary text-white">D3 Graph</div>
+                            <div className="card-body" style={{ minHeight: "200px" }}>
+                                <div id="d3Graph">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* DJ Controls */}
+                    <div className="col-md-4 mb-3">
+                        <div className="card">
+                            <div className="card-header bg-dark text-white">DJ Controls</div>
+                            <div className="card-body">
+                                <DJ_Controls
+                                    volume={volume}
+                                    onVolumeChange={(e) => setVolume(e.target.value)}
+                                    onToggle={handleToggle}
+                                    onSetCpm={handleSetCpm}
+                                    cpmError={cpmError}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Row: Editor*/}
+                <div className="row mb-3">
+                    <div className="col-md-12">
+                        <div className="card">
+                            <div className="card-header bg-dark text-white">Code Editor</div>
+                            <div className="card-body">
+                                <div id="editor" style={{ minHeight: "300px", backgroundColor: "#1e1e1e" }} />
+                                <div id="output" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <canvas id="roll"></canvas>
+        </div>
     );
-
-
 }
