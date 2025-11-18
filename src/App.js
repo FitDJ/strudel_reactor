@@ -16,6 +16,7 @@ import PreProcText from './components/PreProcText';
 import { preProcess } from './utils/preProcessLogic';
 import { toggleSectionPrefix } from './utils/MuteLogic';
 import { startPlayback, stopPlayback } from './services/PlaybackServices';
+import D3Graph from './components/D3_Graph';
 
 let globalEditor = null;
 
@@ -158,7 +159,7 @@ export default function StrudelDemo() {
                             <div className="card-header bg-secondary text-white">D3 Graph</div>
                             <div className="card-body" style={{ minHeight: "200px" }}>
                                 <div id="d3Graph">
-                                    
+                                    <D3Graph />
                                 </div>
                             </div>
                         </div>
